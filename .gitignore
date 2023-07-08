@@ -1,4 +1,11 @@
 /Task
 /venv
-/idea
+/.idea
+/cars
+/__pycache__
+config/__pycache__
+university/__pycache__
+university/migrations/__pycache__/
+user_auth/__pycache__
+user_auth/migrations/__pycache__
 .env
