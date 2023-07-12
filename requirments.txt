@@ -2,6 +2,7 @@ Django
 djangorestframework
 psycopg
 pillow
+django-filter
 
 
 

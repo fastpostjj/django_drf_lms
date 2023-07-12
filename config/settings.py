@@ -39,9 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     "user_auth",
     'university',
-    # 'cars',
 ]
 
 MIDDLEWARE = [
@@ -91,7 +91,9 @@ if os.path.isfile(dot_env):
 else:
     raise FileNotFoundError(f"File {dot_env} did not find in {BASE_DIR}")
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 
 DATABASES = {
