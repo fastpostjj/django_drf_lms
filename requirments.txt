@@ -3,7 +3,7 @@ djangorestframework
 psycopg
 pillow
 django-filter
-
+djangorestframework-simplejwt
 
 
 

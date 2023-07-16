@@ -1,23 +1,10 @@
 from django.db import models
+
+from config import settings
 from config.settings import NULLABLE
 from user_auth.models import User
 
 # Create your models here.
-'''
-Создайте модели пользователя, курса и урока.
-Описать CRUD для модели курса через Viewsets и для урока через Generic-классы.
-Описать простейшие сериализаторы для работы контроллеров.
-'''
-
-# class User(models.Model):
-"""
-    Пользователь:
-    все поля от обычного пользователя, но авторизацию заменить на email
-    телефон
-    город
-    аватарка
-    """
-
 class Curs(models.Model):
     """
     название
@@ -26,10 +13,19 @@ class Curs(models.Model):
     title
     preview
     description
+    owner
     """
-    title = models.CharField(max_length=128, verbose_name='курс')
-    preview = models.ImageField(verbose_name="Превью курса", upload_to="university/curs/", **NULLABLE)
-    description = models.TextField( verbose_name='Описание курса', **NULLABLE)
+    title = models.CharField(max_length=128,
+                             verbose_name='курс')
+    preview = models.ImageField(verbose_name="Превью курса",
+                                upload_to="university/curs/",
+                                **NULLABLE)
+    description = models.TextField( verbose_name='Описание курса',
+                                    **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              verbose_name='владелец',
+                              on_delete=models.SET_NULL,
+                              **NULLABLE)
 
     def __str__(self):
         return f'{self.title} '
@@ -50,15 +46,25 @@ class Lesson(models.Model):
     preview
     url_video
     curs
+    owner
     """
-    title = models.CharField(max_length=128, verbose_name='урок')
-    description = models.TextField( verbose_name='Описание урока', **NULLABLE)
-    preview = models.ImageField(verbose_name="Превью урока", upload_to="university/lessons/", **NULLABLE)
-    url_video = models.URLField(verbose_name="ссылка на видео", **NULLABLE)
+    title = models.CharField(max_length=128,
+                             verbose_name='урок')
+    description = models.TextField( verbose_name='Описание урока',
+                                    **NULLABLE)
+    preview = models.ImageField(verbose_name="Превью урока",
+                                upload_to="university/lessons/",
+                                **NULLABLE)
+    url_video = models.URLField(verbose_name="ссылка на видео",
+                                **NULLABLE)
     curs = models.ForeignKey(Curs,
                              verbose_name='курс',
                              on_delete=models.SET_NULL,
                              **NULLABLE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
+                              verbose_name='владелец',
+                              on_delete=models.SET_NULL,
+                              **NULLABLE)
 
     def __str__(self):
         return f'Урок {self.title}, курс {self.curs} '
