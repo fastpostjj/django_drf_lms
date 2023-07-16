@@ -14,14 +14,14 @@ class PayingAdmin(admin.ModelAdmin):
 
 @admin.register(Curs)
 class CursAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'preview', 'description')
-    list_display_links = ('id', 'title', 'preview', 'description')
-    list_filter = ('id', 'title', 'preview', 'description')
-    search_fields = ('id', 'title', 'preview', 'description')
+    list_display = ('id', 'title', 'preview', 'description', 'owner')
+    list_display_links = ('id', 'title', 'preview', 'description', 'owner')
+    list_filter = ('id', 'title', 'preview', 'description', 'owner')
+    search_fields = ('id', 'title', 'preview', 'description', 'owner')
 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'preview','description','url_video','curs')
-    list_display_links = ('id', 'title', 'preview','description','url_video','curs')
-    list_filter = ('id', 'title', 'preview','description','url_video','curs')
-    search_fields = ('id', 'title', 'preview','description','url_video','curs')
+    list_display = ('id', 'title', 'preview','description','url_video','curs', 'owner')
+    list_display_links = ('id', 'title', 'preview','description','url_video','curs', 'owner')
+    list_filter = ('id', 'title', 'preview','description','url_video','curs', 'owner')
+    search_fields = ('id', 'title', 'preview','description','url_video','curs', 'owner')

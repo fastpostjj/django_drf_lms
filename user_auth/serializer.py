@@ -1,3 +1,4 @@
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.db import models
 from user_auth.models import User
@@ -14,7 +15,19 @@ class UsersSerializers(serializers.ModelSerializer):
             'phone',
             'avatar',
             'paying'
-                )
+        )
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """Сериализатор  MyTokenObtainPairSerializer  для обработки запросов на получение токена"""
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Добавление пользовательских полей в токен
+        token['username'] = user.username
+        token['email'] = user.email
+        return token
 
 
     # def get_paying(self, obj):
