@@ -50,7 +50,8 @@ class Command(BaseCommand):
 
     def change_password(self, *args, **options):
         # user = User.objects.get(email='fastpost@yandex.ru')
-        user = User.objects.get(email='example@example.com')
+        # user = User.objects.get(email='example@example.com')
+        user = User.objects.get(email='fastfastpost@yandex.ru')
         # user = User.objects.get(email='fastfastpost@yandex.ru')
         # user.check_password('123abc123')
         user.set_password('123abc123')
