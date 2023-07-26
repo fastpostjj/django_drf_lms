@@ -47,8 +47,7 @@ class CursSerializers(serializers.ModelSerializer):
             'lessons_count',
             'lessons',
             'owner',
-            # 'is_subscribed',
-            # 'subscribed',
+            # 'is_subscribed'
         )
     def get_lessons_count(self,  obj):
         return obj.lesson_set.count()
@@ -61,10 +60,9 @@ class CursSerializers(serializers.ModelSerializer):
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             user = request.user
-            # subscribed = Subscription.objects.filter(user=user, curs=obj).exists()
-            subscribed = SubscriptionSerializers(obj.suscription_set.all(), many=True)
-                # user=user, curs=obj).exists()
-            return subscribed
+            is_subscribed = Subscription.objects.filter(user=user, curs=obj).exists()
+            # is_subscribed = SubscriptionSerializers(obj.suscription_set.all(), many=True)
+            return is_subscribed
         return False
             # is_subscribed = SubscriptionSerializers(obj.subscription_set.all())
 

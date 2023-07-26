@@ -241,7 +241,7 @@ class SubscriptionListView(generics.ListAPIView):
     pagination_class = PaginationClass
 
     def get(self, request):
-        queryset = Subscription.objects.all()
+        queryset = Subscription.objects.all().order_by('user')
         paginated_queryset = self.paginate_queryset(queryset)
         serializer = SubscriptionSerializers(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)

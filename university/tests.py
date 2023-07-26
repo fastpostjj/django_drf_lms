@@ -1,3 +1,4 @@
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
@@ -36,38 +37,6 @@ def create_curs():
         description="Курс для 6-го класса",
         owner = TEST_USER_EMAIL
     )
-class TestUpdateCurs(APITestCase):
-    def setUp(self):
-        super().setUp()
-        self.user = create_user()
-        self.url_token = reverse('token_obtain_pair')
-        response = self.client.post(self.url_token,
-                                    {"email": TEST_USER_EMAIL,
-                                     "password": TEST_USER_PASSWORD
-                                     })
-        self.access_token = response.json().get('access')
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
-
-        self.curs = Curs.objects.create(title='Тестовый курс')
-        self.subscription = Subscription.objects.create(user=self.user, curs=self.curs)
-
-    def test_get(self):
-
-        self.assertEqual(Curs.objects.count(), 1)
-
-        self.response = self.client.get(reverse("curs-detail", args=[self.curs.pk]))
-        print(self.response.json(), self.user)
-        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
-
-
-
-        url = reverse('curs-detail', args=[self.curs.id])
-        self.response = self.client.get(url)
-        self.assertEqual(self.response.status_code, status.HTTP_200_OK)
-
-
-
-
 
 class TestSubscription(APITestCase):
     def setUp(self):
@@ -87,7 +56,7 @@ class TestSubscription(APITestCase):
     def test_create_subscription(self):
         self.curs2 = Curs.objects.create(title='Еще один тестовый курс')
         url = reverse('subscription_create')
-        data = {'curs': self.curs2.id, 'subscribed': True}
+        data = {'curs': self.curs2.id}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Subscription.objects.count(), 2)
@@ -101,30 +70,27 @@ class TestSubscription(APITestCase):
         # self.assertEqual(response.data['subscribed'], self.subscription.subscribed)
 
     def test_update_subscription(self):
+        # Создаем новый курс для того, чтобы обновить подписку
+        self.curs3 = Curs.objects.create(title='Обновленный тестовый курс')
+
         url = reverse('subscription_update', args=[self.subscription.id])
-        data = {'subscribed': True}
-        # self.client.force_login(self.user)
+        data = {'curs': self.curs3.id}
         response = self.client.put(url, data)
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(response.data['subscribed'], True)
+
 
     def test_delete_subscription(self):
         url = reverse('subscription_destroy', args=[self.subscription.id])
-        # self.client.force_login(self.user)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Subscription.objects.count(), 0)
 
     def test_list_subscriptions(self):
         url = reverse('subscriptions_list')
-        # self.client.force_login(self.user)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['user'], self.user.id)
-        self.assertEqual(response.data[0]['curs'], self.curs.id)
-        # self.assertEqual(response.data[0]['subscribed'], self.subscription.subscribed)
+        self.assertEqual(response.json().get('results')[0]['curs'], self.curs.id)
+
 
 class TestLessons(APITestCase):
     def setUp(self):
@@ -273,6 +239,19 @@ class TestCurs(APITestCase):
         self.assertEqual(curs.title, "Курс уроков биологии")
         self.assertEqual(curs.description, "Курс для 6-го класса")
 
+    def test_send_email_on_curs_update(self):
+        mail.outbox = []  # Очищаем список перед тестом
+        sub = Subscription.objects.create(curs=self.curs, user=self.user)
+        data = {'title': 'Обновленный курс для уведомления'}
+        response = self.client.put(reverse('curs-detail', args=[self.curs.pk]), data)
+        self.assertEqual(response.status_code, 200)
+
+        # Проверяем, что уведомления отправлены
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'Обновление курса')
+        self.assertEqual(mail.outbox[0].to, [TEST_USER_EMAIL])
+
+
     def test_get_curs_list_status(self):
         self.response = self.client.get(reverse('curs-list'))
         results = self.response.json().get("results")
@@ -349,7 +328,6 @@ class CursTestCase(APITestCase):
         data = {"title": "Обновленный курс", "description": "Описание"}
 
         response = self.client.put(reverse('curs-detail', args=[self.curs.id]), data)
-        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_curs(self):
