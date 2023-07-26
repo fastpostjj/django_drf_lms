@@ -26,28 +26,23 @@ class SubscriptionSerializers(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = (
-                # 'user',
                 'curs',
-                # 'subscribed',
         )
 
 class CursSerializers(serializers.ModelSerializer):
     lessons_count = serializers.SerializerMethodField()
     lessons = serializers.SerializerMethodField(read_only=True)
-    # milage = MilageSerializer(many=True, read_only=True, source='milage_set')
-    # subscribed = SubscriptionSerializers(read_only=True, source='subscription_set')
-
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Curs
         fields = (
-            # 'id',
             'title',
             'preview',
             'description',
             'lessons_count',
-            'lessons',
+            'is_subscribed',
             'owner',
-            # 'is_subscribed'
+            'lessons'
         )
     def get_lessons_count(self,  obj):
         return obj.lesson_set.count()
@@ -61,11 +56,8 @@ class CursSerializers(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             user = request.user
             is_subscribed = Subscription.objects.filter(user=user, curs=obj).exists()
-            # is_subscribed = SubscriptionSerializers(obj.suscription_set.all(), many=True)
             return is_subscribed
         return False
-            # is_subscribed = SubscriptionSerializers(obj.subscription_set.all())
-
 
 class LessonSerializers(serializers.ModelSerializer):
 

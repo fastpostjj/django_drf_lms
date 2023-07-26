@@ -261,8 +261,9 @@ class TestCurs(APITestCase):
                 "preview": None,
                 "description": "Курс для 5-го класса",
                 "lessons_count": 0,
+                "owner": self.user.id,
+                'is_subscribed': False,
                 "lessons": [],
-                "owner": self.user.id
             }
         ]
         self.assertEqual(results, expected_results)
@@ -279,8 +280,9 @@ class TestCurs(APITestCase):
                 'preview': None,
                 'description': 'Курс для 5-го класса',
                 'lessons': [],
-                'lessons_count': 0,
                 'owner': self.user.id,
+                'is_subscribed': False,
+                'lessons_count': 0,
         }
 
         self.assertEqual(response.json(), expected_data)
