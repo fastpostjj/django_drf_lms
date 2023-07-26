@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+
     "user_auth",
     'university',
-
+    # 'cars',
 ]
 
 MIDDLEWARE = [
@@ -175,3 +176,15 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/users/'
 
 NULLABLE = {'null': True, 'blank': True}
+
+# для отправки письма
+
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = email
+EMAIL_HOST_PASSWORD = password_email
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
