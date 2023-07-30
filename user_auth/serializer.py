@@ -2,7 +2,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.db import models
 from user_auth.models import User
-from university.serializer import PayingSerializers
+from payments.serializer import PayingSerializers
 
 class UsersSerializers(serializers.ModelSerializer):
     paying = PayingSerializers(many=True, read_only=True, source='paying_set')

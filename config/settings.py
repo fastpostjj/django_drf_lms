@@ -40,12 +40,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
+    'drf_yasg',
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
 
     "user_auth",
     'university',
+    'payments',
     # 'cars',
 ]
 
@@ -57,6 +60,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -188,3 +193,30 @@ EMAIL_USE_SSL = True
 
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',  # адрес фронтенд-сервера
+    # '<http://>',  # адрес фронтенд-сервера
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://read-and-write.example.com", #  адрес фронтенд-сервера
+    # и добавьте адрес бэкенд-сервера
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
+URL_STRIPE = 'https://api.stripe.com'
+# URL_CREATE_PAIMENT = 'https://stripe.com/docs/api/payment_intents/create' # создание платежа
+# URL_RETRIEVE_PAIMENT = 'https://stripe.com/docs/api/payment_intents/retrieve' # получение платежа
+URL_CREATE_INTENT = 'https://api.stripe.com/v1/payment_intents' # создание намерения платежа
+URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods' # создание платежа
+
+
+card_number = os.getenv('card_number')
+card_exp_month =os.getenv('card_exp_month')
+card_exp_year = os.getenv('card_exp_year')
+card_cvc= os.getenv('card_cvc')
+
+
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')

@@ -1,12 +1,16 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, filters
 from rest_framework.response import Response
-from university.models import Curs, Lesson, Paying, Subscription
-from university.serializer import CursSerializers, LessonSerializers, PayingSerializers, SubscriptionSerializers
+from rest_framework.views import APIView
+
+from university.models import Curs, Lesson, Subscription
+from university.serializer import CursSerializers, LessonSerializers, SubscriptionSerializers
 from rest_framework.permissions import IsAuthenticated
 from university.permissions import OwnerOrAdmin, OwnerOrStaffOrAdmin, OwnerOrStafOrAdminView, OwnerOrAdminChange, \
     OwnerOrAdminChangeSubscribe
-from rest_framework.pagination import PageNumberPagination
+from university.paginations import PaginationClass
 
 from university.services.mailing import send_email
 from user_auth.models import User
@@ -14,30 +18,25 @@ from user_auth.models import User
 
 # Create your views here.
 
+"""
+university/ ^curs/$ [name='curs-list']
+university/ ^curs\.(?P<format>[a-z0-9]+)/?$ [name='curs-list']
+university/ ^curs/(?P<pk>[^/.]+)/$ [name='curs-detail']
+university/ ^curs/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$ [name='curs-detail']
 
-
-class PaginationClass(PageNumberPagination):
-    page_size = 2  # Количество элементов на странице
-    page_size_query_param = 'page_size'  # Параметр запроса для указания количества элементов на странице
-    max_page_size = 10  # Максимальное количество элементов на странице
-
-
+- Для создания нового объекта `Curs`:
+  POST /curs/
+- Для обновления существующего объекта `Curs`:
+  PUT /curs/<id>/
+  PATCH /curs/<id>/
+- Для удаления существующего объекта `Curs`:
+   DELETE /curs/<id>/
+- Для вывода списка всех объектов `Curs`:
+    GET /curs/
+"""
 class CursViewSet(viewsets.ModelViewSet):
     """
-    university/ ^curs/$ [name='curs-list']
-    university/ ^curs\.(?P<format>[a-z0-9]+)/?$ [name='curs-list']
-    university/ ^curs/(?P<pk>[^/.]+)/$ [name='curs-detail']
-    university/ ^curs/(?P<pk>[^/.]+)\.(?P<format>[a-z0-9]+)/?$ [name='curs-detail']
-
-    - Для создания нового объекта `Curs`:
-      POST /curs/
-    - Для обновления существующего объекта `Curs`:
-      PUT /curs/<id>/
-      PATCH /curs/<id>/
-    - Для удаления существующего объекта `Curs`:
-       DELETE /curs/<id>/
-    - Для вывода списка всех объектов `Curs`:
-        GET /curs/
+    Viewset for curs
     """
     permission_classes = [OwnerOrAdminChange]
     serializer_class = CursSerializers
@@ -100,8 +99,10 @@ class CursViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
 class LessonListView(generics.ListAPIView):
+    """
+    list view lesson
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
@@ -125,6 +126,9 @@ class LessonListView(generics.ListAPIView):
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
+    """
+    create view lesson
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
@@ -134,49 +138,34 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
+    """
+    retrieve view lesson
+    """
     permission_classes = [OwnerOrStaffOrAdmin, IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
+    """
+    update view lesson
+    """
     permission_classes = [OwnerOrAdmin, IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
+    """
+    destroy view lesson
+    """
     permission_classes = [OwnerOrAdmin, IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
 
-
-class PayingViewSet(viewsets.ModelViewSet):
-    permission_classes = [OwnerOrStaffOrAdmin, IsAuthenticated]
-    serializer_class = PayingSerializers
-    queryset = Paying.objects.all()
-
-
-class PayingListAPIView(generics.ListAPIView):
-    """сортировка    по    дате    оплаты и по сумме
-    localhost:8000/university/payings/?ordering=-date_pay
-    localhost:8000/university/payings/?ordering=amount
-
-    фильтрация     по    курсу    или    уроку,
-    localhost:8000/university/payings/?paid_for_curs=1
-    localhost:8000/university/payings/?paid_for_lesson=2
-
-    фильтрация    по    способу    оплаты.
-    localhost:8000/university/payings/?payment_method=cash
-    localhost:8000/university/payings/?payment_method=transfer
-    """
-    permission_classes = [OwnerOrStaffOrAdmin, IsAuthenticated]
-    queryset = Paying.objects.all()
-    serializer_class = PayingSerializers
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['paid_for_curs', 'paid_for_lesson', 'payment_method']
-    ordering_fields = ['date_pay', 'amount']
-
 class SubscriptionCreateAPIView(generics.CreateAPIView):
+    """
+    create view subscription
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
@@ -185,56 +174,35 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user, curs_id=self.request.data['curs'])
-
-
-    # def create(self, request, *args, **kwargs):
-    #     data = request.data.copy()
-    #     data['user'] = request.user.id
-    #     data['curs'] = kwargs['curs_id']
-    #
-    #     mutable_request = request._mutable
-    #     request._mutable = True
-    #     request.data = data
-    #
-    #     response = super().create(request, *args, **kwargs)
-    #
-    #     request._mutable = mutable_request
-    #
-    #     return response
-
-    # def create(self, request, *args, **kwargs):
-    #     request.data['user'] = self.request.user.id
-    #     return super().create(request, *args, **kwargs)
-        #, status=status.HTTP_201_CREATED, headers=headers)
-
-    # return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-
-class SubscriptionAPIView(generics.RetrieveAPIView):
-    permission_classes = [OwnerOrStafOrAdminView, IsAuthenticated]
-    serializer_class = SubscriptionSerializers
-    queryset = Subscription.objects.all()
-
 class SubscriptionUpdateAPIView(generics.UpdateAPIView):
+    """
+    update view subscription
+    """
     permission_classes = [OwnerOrAdminChangeSubscribe, IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
 
 class SubscriptionDestroyAPIView(generics.DestroyAPIView):
+    """
+    destroy view subscription
+    """
     permission_classes = [OwnerOrAdminChangeSubscribe, IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
 
 class SubscriptionRetrieveAPIView(generics.RetrieveAPIView):
+    """
+    retrieve view subscription
+    """
     permission_classes = [OwnerOrAdminChangeSubscribe, IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
 
+
 class SubscriptionListView(generics.ListAPIView):
+    """
+    list view subscription
+    """
     permission_classes = [IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
@@ -255,6 +223,45 @@ class SubscriptionListView(generics.ListAPIView):
             # Обычный пользователь - только свои
             queryset = queryset.filter(owner=self.request.user).order_by('user')
         return queryset
+
+
+# class SubscriptionAPIView(generics.RetrieveAPIView):
+#     permission_classes = [OwnerOrStafOrAdminView, IsAuthenticated]
+#     serializer_class = SubscriptionSerializers
+#     queryset = Subscription.objects.all()
+
+
+# class StudentAPIView(APIView):
+#     """
+#     example text
+#     """
+#     permission_classes = [IsAuthenticated]
+#
+#     @swagger_auto_schema(
+#         responses={200: 'members added'},
+#         request_body=openapi.Schema(
+#             type=openapi.TYPE_ARRAY,
+#             items=openapi.Schema(
+#                 type=openapi.TYPE_OBJECT, description='Students ids list',
+#                 properties={
+#                     'id': openapi.Schema(
+#                         type=openapi.TYPE_STRING,
+#                         description='student id',
+#                         example="1"
+#                     ),
+#                     'curs': openapi.Schema(
+#                         type=openapi.TYPE_STRING,
+#                         description='curs id',
+#                         example="1"
+#                     ),
+#                 }
+#             )
+#         )
+#     )
+#     def post(self, *args, **kwargs):
+#         return Response('ok')
+
+
 
 
 

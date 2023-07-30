@@ -4,6 +4,9 @@ psycopg
 python-dotenv
 django-filter
 djangorestframework-simplejwt
+drf_yasg
+django-cors-headers
+stripe
 
 
 
