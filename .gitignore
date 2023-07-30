@@ -6,6 +6,10 @@
 config/__pycache__
 university/__pycache__
 university/migrations/__pycache__/
+payments/__pycache__/
+payments/services/__pycache__/
+payments/migrations/__pycache__/
+payments/management/commands/__pycache__/
 user_auth/__pycache__
 user_auth/migrations/__pycache__
 user_auth/management/commands/__pycache__/

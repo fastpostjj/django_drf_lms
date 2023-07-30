@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import models
-from university.models import Curs, Lesson, Paying, Subscription
+from university.models import Curs, Lesson, Subscription
 
 def is_contain_youtube_url(field, value) -> bool:
     if isinstance(value, dict):
@@ -73,17 +73,7 @@ class LessonSerializers(serializers.ModelSerializer):
         )
         validators = [UrlCustomValidator(field='url_video')]
 
-class PayingSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Paying
-        fields = (
-            'user',
-            'date_pay',
-            'paid_for_curs',
-            'paid_for_lesson',
-            'amount',
-            'payment_method',
-        )
+
 
 
 

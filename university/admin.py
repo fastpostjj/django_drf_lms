@@ -1,16 +1,9 @@
 from django.contrib import admin
 
-from university.models import Paying, Curs, Lesson, Subscription
+from university.models import  Curs, Lesson, Subscription
 
 
 # Register your models here.
-
-@admin.register(Paying)
-class PayingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'date_pay', 'paid_for_curs', 'paid_for_lesson', 'amount', 'payment_method')
-    list_display_links = ('id', 'user', 'date_pay', 'paid_for_curs', 'paid_for_lesson', 'amount', 'payment_method')
-    list_filter = ('id', 'user', 'date_pay', 'paid_for_curs', 'paid_for_lesson', 'amount', 'payment_method')
-    search_fields = ('id', 'user', 'date_pay', 'paid_for_curs', 'paid_for_lesson', 'amount', 'payment_method')
 
 @admin.register(Curs)
 class CursAdmin(admin.ModelAdmin):
