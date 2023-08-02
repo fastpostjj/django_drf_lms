@@ -1,6 +1,8 @@
 import requests
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, filters, viewsets, status, serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -145,6 +147,12 @@ class PayingConfirmCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Paying.objects.all()
     serializer_class = PayingSerializers_confirm_payment
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=PayingSerializers_confirm_payment)
+        }
+    )
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
