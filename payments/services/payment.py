@@ -114,11 +114,11 @@ class StripePay():
             if response.status_code == "200":
                 payment_intent_id = payment_intent['id']
 
-                print("payment_intent=", payment_intent)
+                # print("payment_intent=", payment_intent)
                 print("payment_intent['id']=", payment_intent['id'])
                 return payment_intent
             else:
-                print(url)
+                # print(url)
                 print(response.status_code)
                 print(response.json())
 
@@ -148,7 +148,7 @@ class StripePay():
                 payment_method = response.json()
                 return payment_method
             else:
-                print(response)
+                # print(response)
                 print(response.json())
 
         except Exception as error:
@@ -254,6 +254,7 @@ def payment(*args, **options):
     # создаем объект stripe
     stripe_payment = StripePay()
     print("Создаем намерение")
+    payment_intent = None
 
     payment_intent = stripe_payment.create_intent(amount=3000,currency='rub', description="Test payment", metadata={"curs":"curs1","user":"user"})
     if payment_intent:
@@ -271,7 +272,7 @@ def payment(*args, **options):
             print("Подтверждаем платеж")
             payment_confirm = stripe_payment.confirm_payment(payment_intent_id, payment_method_id)
 
-            print("Поверка статуса")
+            print("Проверка статуса")
             intent = stripe_payment.retrieve_payment(payment_intent_id)
             print(intent.status)
         else:
@@ -280,13 +281,16 @@ def payment(*args, **options):
         print("Платежное намерение не создано")
 
     # 2-й способ через API
-    print("API")
+    # print("API")
     # print("Создаем намерение")
-    # intent_API = stripe_payment.create_intent_api()
+    # intent_API = stripe_payment.create_intent_api(amount=5000,currency='rub', description="Test payment", metadata={"curs":"curs1","user":"user"})
+    # print("intent_API['id']=",intent_API['id'])
     # print("Создаем платежный метод")
-    # payment_method_API = stripe_payment.create_payment_method_api()
+    # payment_method_API = stripe_payment.create_payment_method_api(token="tok_visa")
     # print("payment_method=", payment_method_API['id'])
-    # stripe_payment.retrieve_payment_api(id1)
+    # stripe_payment.confirm_payment(intent_API['id'],payment_method_API['id'])
+    # stripe_payment.retrieve_payment_api(intent_API['id'])
+    # print("status=", intent_API['status'])
 
 def check_status(*args):
     """
