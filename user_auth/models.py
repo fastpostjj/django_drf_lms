@@ -23,6 +23,7 @@ class User(AbstractUser):
     phone = models.CharField(max_length=35, verbose_name='телефон', **NULLABLE)
     avatar = models.ImageField(upload_to='users_auth/', verbose_name='аватар', **NULLABLE)
     country = models.CharField(max_length=150, verbose_name='страна', **NULLABLE)
+    id_payment_method = models.CharField(max_length=150, verbose_name="id метода платежа", **NULLABLE)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

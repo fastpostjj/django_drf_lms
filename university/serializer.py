@@ -37,6 +37,7 @@ class CursSerializers(serializers.ModelSerializer):
         model = Curs
         fields = (
             'title',
+            'amount',
             'preview',
             'description',
             'lessons_count',
@@ -66,6 +67,7 @@ class LessonSerializers(serializers.ModelSerializer):
         fields = (
             'title',
             'preview',
+            'amount',
             'description',
             'url_video',
             'curs',
