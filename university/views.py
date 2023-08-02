@@ -43,6 +43,13 @@ class CursViewSet(viewsets.ModelViewSet):
     queryset = Curs.objects.all()
     pagination_class = PaginationClass
 
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=CursSerializers)
+        }
+    )
+
     def get(self, request):
         queryset = Curs.objects.all()
         paginated_queryset = self.paginate_queryset(queryset)
@@ -51,13 +58,16 @@ class CursViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            # Пользователь с правами персонала или администратора может видеть все курсы
-            queryset = queryset.order_by('title')
+        if not self.request:
+            return Curs.objects.none()
         else:
-            # Обычный пользователь - только свои
-            queryset = queryset.filter(owner=self.request.user).order_by('title')
-        return queryset
+            if self.request.user.is_staff or self.request.user.is_superuser:
+                # Пользователь с правами персонала или администратора может видеть все курсы
+                queryset = queryset.order_by('title')
+            else:
+                # Обычный пользователь - только свои
+                queryset = queryset.filter(owner=self.request.user).order_by('title')
+            return queryset
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -102,11 +112,20 @@ class CursViewSet(viewsets.ModelViewSet):
 class LessonListView(generics.ListAPIView):
     """
     list view lesson
+    Выводит список уроков. Для просмотра требуется авторизация.
+    Администратор или менеджер могут просматривать все уроки, обычный
+    пользователь - только свои.
     """
     permission_classes = [IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
     pagination_class = PaginationClass
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=LessonSerializers)
+        }
+    )
 
     def get(self, request):
         queryset = Lesson.objects.all()
@@ -116,13 +135,16 @@ class LessonListView(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            # Пользователь с правами персонала или администратора может видеть все уроки
-            queryset = queryset.order_by('title')
+        if not self.request:
+            return Lesson.objects.none()
         else:
-            # Обычный пользователь - только свои
-            queryset = queryset.filter(owner=self.request.user).order_by('title')
-        return queryset
+            if self.request.user.is_staff or self.request.user.is_superuser:
+                # Пользователь с правами персонала или администратора может видеть все уроки
+                queryset = queryset.order_by('title')
+            else:
+                # Обычный пользователь - только свои
+                queryset = queryset.filter(owner=self.request.user).order_by('title')
+            return queryset
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
@@ -208,6 +230,12 @@ class SubscriptionListView(generics.ListAPIView):
     queryset = Subscription.objects.all()
     pagination_class = PaginationClass
 
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=SubscriptionSerializers(many=True))
+        },
+    )
+
     def get(self, request):
         queryset = Subscription.objects.all().order_by('user')
         paginated_queryset = self.paginate_queryset(queryset)
@@ -216,13 +244,18 @@ class SubscriptionListView(generics.ListAPIView):
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
-        if self.request.user.is_staff or self.request.user.is_superuser:
-            # Пользователь с правами персонала или администратора может видеть все подписки
-            queryset = queryset.order_by('user')
+        if not self.request:
+            return Subscription.objects.none()
         else:
-            # Обычный пользователь - только свои
-            queryset = queryset.filter(owner=self.request.user).order_by('user')
+            if self.request.user.is_staff or self.request.user.is_superuser:
+                # Пользователь с правами персонала или администратора может видеть все подписки
+                queryset = queryset.order_by('user')
+            else:
+                # Обычный пользователь - только свои
+                queryset = queryset.filter(owner=self.request.user).order_by('user')
+
         return queryset
+
 
 
 

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'django_celery_beat',
 
     "user_auth",
     'university',
@@ -196,7 +197,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',  # адрес фронтенд-сервера
-    # '<http://>',  # адрес фронтенд-сервера
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -206,8 +206,6 @@ CSRF_TRUSTED_ORIGINS = [
 
 CORS_ALLOW_ALL_ORIGINS = False
 URL_STRIPE = 'https://api.stripe.com'
-# URL_CREATE_PAIMENT = 'https://stripe.com/docs/api/payment_intents/create' # создание платежа
-# URL_RETRIEVE_PAIMENT = 'https://stripe.com/docs/api/payment_intents/retrieve' # получение платежа
 URL_CREATE_INTENT = 'https://api.stripe.com/v1/payment_intents' # создание намерения платежа
 URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods' # создание платежа
 
@@ -220,3 +218,29 @@ card_cvc= os.getenv('card_cvc')
 
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+
+# Настройки для Celery
+
+# URL-адрес брокера сообщений, Redis
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
+# URL-адрес брокера результатов, также Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+# Часовой пояс для работы Celery
+CELERY_TIMEZONE = "Europe/Moscow"
+
+# Флаг отслеживания выполнения задач
+CELERY_TASK_TRACK_STARTED = True
+
+# Максимальное время на выполнение задачи
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+# Настройки для Celery
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'payments.tasks.check_status_payment',  # Путь к задаче
+        'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+}
