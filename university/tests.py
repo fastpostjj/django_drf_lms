@@ -191,6 +191,7 @@ class TestCurs(APITestCase):
         self.user = create_user()
         self.curs = Curs.objects.create(
             title = "Курс уроков физической культуры",
+            amount=5100,
             preview = None,
             description = "Курс для 5-го класса",
             owner=self.user
@@ -259,6 +260,7 @@ class TestCurs(APITestCase):
             {
                 "title": "Курс уроков физической культуры",
                 "preview": None,
+                'amount': 5100,
                 "description": "Курс для 5-го класса",
                 "lessons_count": 0,
                 "owner": self.user.id,
@@ -278,6 +280,7 @@ class TestCurs(APITestCase):
         expected_data = {
                 'title': 'Курс уроков физической культуры',
                 'preview': None,
+                'amount': 5100,
                 'description': 'Курс для 5-го класса',
                 'lessons': [],
                 'owner': self.user.id,

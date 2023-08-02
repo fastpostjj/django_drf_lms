@@ -26,6 +26,7 @@ class Curs(models.Model):
                               verbose_name='владелец',
                               on_delete=models.SET_NULL,
                               **NULLABLE)
+    amount = models.FloatField(verbose_name="Цена курса, руб.", **NULLABLE)
 
     def __str__(self):
         return f'{self.title} '
@@ -65,6 +66,7 @@ class Lesson(models.Model):
                               verbose_name='владелец',
                               on_delete=models.SET_NULL,
                               **NULLABLE)
+    amount = models.FloatField(verbose_name="Цена урока, руб.", **NULLABLE)
 
     def __str__(self):
         return f'Урок {self.title}, курс {self.curs} '

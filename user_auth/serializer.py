@@ -14,6 +14,7 @@ class UsersSerializers(serializers.ModelSerializer):
             'country',
             'phone',
             'avatar',
+            'id_payment_method',
             'paying'
         )
 

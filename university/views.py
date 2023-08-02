@@ -225,41 +225,6 @@ class SubscriptionListView(generics.ListAPIView):
         return queryset
 
 
-# class SubscriptionAPIView(generics.RetrieveAPIView):
-#     permission_classes = [OwnerOrStafOrAdminView, IsAuthenticated]
-#     serializer_class = SubscriptionSerializers
-#     queryset = Subscription.objects.all()
-
-
-# class StudentAPIView(APIView):
-#     """
-#     example text
-#     """
-#     permission_classes = [IsAuthenticated]
-#
-#     @swagger_auto_schema(
-#         responses={200: 'members added'},
-#         request_body=openapi.Schema(
-#             type=openapi.TYPE_ARRAY,
-#             items=openapi.Schema(
-#                 type=openapi.TYPE_OBJECT, description='Students ids list',
-#                 properties={
-#                     'id': openapi.Schema(
-#                         type=openapi.TYPE_STRING,
-#                         description='student id',
-#                         example="1"
-#                     ),
-#                     'curs': openapi.Schema(
-#                         type=openapi.TYPE_STRING,
-#                         description='curs id',
-#                         example="1"
-#                     ),
-#                 }
-#             )
-#         )
-#     )
-#     def post(self, *args, **kwargs):
-#         return Response('ok')
 
 
 

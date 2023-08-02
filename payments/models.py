@@ -37,7 +37,7 @@ class Paying(models.Model):
                                 verbose_name="оплата за урок",
                                  on_delete=models.DO_NOTHING,
                                  **NULLABLE)
-    amount = models.FloatField(verbose_name="суммы оплаты, руб.", default=0.00)
+    amount = models.FloatField(verbose_name="суммы оплаты, руб.", default=0.00, **NULLABLE)
     payment_method = models.CharField(
         verbose_name="Способ оплаты",
         max_length=15,
