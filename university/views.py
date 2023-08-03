@@ -124,6 +124,9 @@ class LessonListView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     pagination_class = PaginationClass
 
+    @swagger_auto_schema(
+        responses={200: openapi.Response(description='Success', schema=LessonSerializers)},
+    )
 
     def get(self, request):
         queryset = Lesson.objects.all()
@@ -142,6 +145,8 @@ class LessonListView(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
         if not self.request:
+            return Lesson.objects.none()
+        if not self.request.user.is_authenticated:
             return Lesson.objects.none()
         else:
             if self.request.user.is_staff or self.request.user.is_superuser:
@@ -310,6 +315,8 @@ class SubscriptionListView(generics.ListAPIView):
         queryset = super().get_queryset()
         if not self.request:
             return Subscription.objects.none()
+        if not self.request.user.is_authenticated:
+            return Subscription.objects.none()
         else:
             if self.request.user.is_staff or self.request.user.is_superuser:
                 # Пользователь с правами персонала или администратора может видеть все подписки
@@ -319,6 +326,14 @@ class SubscriptionListView(generics.ListAPIView):
                 queryset = queryset.filter(owner=self.request.user).order_by('user')
 
         return queryset
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=SubscriptionSerializers)
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 
