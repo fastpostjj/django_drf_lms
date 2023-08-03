@@ -42,6 +42,14 @@ class PayingListAPIView(generics.ListAPIView):
     filterset_fields = ['paid_for_curs', 'paid_for_lesson', 'payment_method']
     ordering_fields = ['date_pay', 'amount']
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Paying.objects.none()
+        else:
+            return queryset
+
 class PayingViewSet(viewsets.ModelViewSet):
     """
      paying viewset
@@ -50,6 +58,14 @@ class PayingViewSet(viewsets.ModelViewSet):
     serializer_class = PayingSerializers
     queryset = Paying.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Paying.objects.none()
+        else:
+            return queryset
+
 class PayingMethodCreateAPIView(generics.UpdateAPIView):
     """
     view create payment method for current user
@@ -57,6 +73,14 @@ class PayingMethodCreateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PayingSerializers_create_payment_methods
     queryset = User.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Paying.objects.none()
+        else:
+            return queryset
 
     def update(self, request, *args, **kwargs):
         payment_method = StripePay()
@@ -83,6 +107,14 @@ class PayingCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Paying.objects.all()
     serializer_class = PayingSerializers_create_payment_for_curs
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Paying.objects.none()
+        else:
+            return queryset
 
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
@@ -181,6 +213,14 @@ class PayingConfirmCreateAPIView(generics.CreateAPIView):
             except Exception as error:
                 raise serializers.ValidationError(f"Ошибка подтверждения платежа: {error}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Paying.objects.none()
+        else:
+            return queryset
 
 
 

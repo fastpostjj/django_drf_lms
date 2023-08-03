@@ -1,9 +1,7 @@
-from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, generics, filters
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from university.models import Curs, Lesson, Subscription
 from university.serializer import CursSerializers, LessonSerializers, SubscriptionSerializers
@@ -60,6 +58,9 @@ class CursViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         if not self.request:
             return Curs.objects.none()
+        if not self.request.user.is_authenticated:
+            # неавторизованный пользователь- ничего не возвращаем
+            return Curs.objects.none()
         else:
             if self.request.user.is_staff or self.request.user.is_superuser:
                 # Пользователь с правами персонала или администратора может видеть все курсы
@@ -71,6 +72,7 @@ class CursViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -85,9 +87,10 @@ class CursViewSet(viewsets.ModelViewSet):
         message_body = f'Обновление курса.\nКурс "{instance.title}" был обновлен. Проверьте новые материалы.'
         subject = 'Обновление курса'
         for user_id in subscribed_users:
-            user = User.objects.get(id=user_id)
-            email = user.email
-            send_email(subject, message_body, email)
+            if request.user:
+                user = User.objects.get(id=user_id)
+                email = user.email
+                send_email(subject, message_body, email)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -121,17 +124,20 @@ class LessonListView(generics.ListAPIView):
     queryset = Lesson.objects.all()
     pagination_class = PaginationClass
 
-    @swagger_auto_schema(
-        responses={
-            200: openapi.Response(description='Success', schema=LessonSerializers)
-        }
-    )
 
     def get(self, request):
         queryset = Lesson.objects.all()
         paginated_queryset = self.paginate_queryset(queryset)
         serializer = LessonSerializers(paginated_queryset, many=True)
         return self.get_paginated_response(serializer.data)
+
+    @swagger_auto_schema(
+        responses={
+            200: openapi.Response(description='Success', schema=LessonSerializers)
+        }
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
     def get_queryset(self, *args, **kwargs):
         queryset = super().get_queryset()
@@ -158,6 +164,14 @@ class LessonCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Lesson.objects.none()
+        else:
+            return queryset
+
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     """
@@ -167,6 +181,14 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Lesson.objects.none()
+        else:
+            return queryset
+
 class LessonUpdateAPIView(generics.UpdateAPIView):
     """
     update view lesson
@@ -174,6 +196,14 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [OwnerOrAdmin, IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Lesson.objects.none()
+        else:
+            return queryset
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
@@ -183,6 +213,14 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     permission_classes = [OwnerOrAdmin, IsAuthenticated]
     serializer_class = LessonSerializers
     queryset = Lesson.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Lesson.objects.none()
+        else:
+            return queryset
 
 class SubscriptionCreateAPIView(generics.CreateAPIView):
     """
@@ -195,6 +233,14 @@ class SubscriptionCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Subscription.objects.none()
+        else:
+            return queryset
+
 
 class SubscriptionUpdateAPIView(generics.UpdateAPIView):
     """
@@ -204,6 +250,14 @@ class SubscriptionUpdateAPIView(generics.UpdateAPIView):
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Subscription.objects.none()
+        else:
+            return queryset
+
 class SubscriptionDestroyAPIView(generics.DestroyAPIView):
     """
     destroy view subscription
@@ -212,6 +266,14 @@ class SubscriptionDestroyAPIView(generics.DestroyAPIView):
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
 
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Subscription.objects.none()
+        else:
+            return queryset
+
 class SubscriptionRetrieveAPIView(generics.RetrieveAPIView):
     """
     retrieve view subscription
@@ -219,6 +281,14 @@ class SubscriptionRetrieveAPIView(generics.RetrieveAPIView):
     permission_classes = [OwnerOrAdminChangeSubscribe, IsAuthenticated]
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        # Для совместимости с автодокументацией
+        queryset = super().get_queryset()
+        if not self.request:
+            return Subscription.objects.none()
+        else:
+            return queryset
 
 
 class SubscriptionListView(generics.ListAPIView):
@@ -229,12 +299,6 @@ class SubscriptionListView(generics.ListAPIView):
     serializer_class = SubscriptionSerializers
     queryset = Subscription.objects.all()
     pagination_class = PaginationClass
-
-    @swagger_auto_schema(
-        responses={
-            200: openapi.Response(description='Success', schema=SubscriptionSerializers(many=True))
-        },
-    )
 
     def get(self, request):
         queryset = Subscription.objects.all().order_by('user')
