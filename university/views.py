@@ -90,7 +90,7 @@ class CursViewSet(viewsets.ModelViewSet):
             if request.user:
                 user = User.objects.get(id=user_id)
                 email = user.email
-                send_email(subject, message_body, email)
+                send_email.delay(subject, message_body, email)
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
@@ -108,7 +108,7 @@ class CursViewSet(viewsets.ModelViewSet):
         for user_id in subscribed_users:
             user = User.objects.get(id=user_id)
             email = user.email
-            send_email(subject, message_body, email)
+            send_email.delay(subject, message_body, email)
         return Response(serializer.data)
 
 

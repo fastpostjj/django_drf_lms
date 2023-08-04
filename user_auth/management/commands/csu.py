@@ -51,14 +51,16 @@ class Command(BaseCommand):
     def change_password(self, *args, **options):
         # user = User.objects.get(email='fastpost@yandex.ru')
         # user = User.objects.get(email='example@example.com')
-        user = User.objects.get(email='fastfastpost@yandex.ru')
+        user = User.objects.get(email='user1@mail.ru')
         # user = User.objects.get(email='fastfastpost@yandex.ru')
-        # user.check_password('123abc123')
+        # user = User.objects.get(email='fastfastpost@yandex.ru')
+        print(user.check_password('123abc123'))
         user.set_password('123abc123')
+
         user.save()
 
     def handle(self, *args, **options):
         # self.create_superuser( *args, **options)
         # self.create_manager( *args, **options)
-        # self.create_user( *args, **options)
-        self.change_password(*args, **options)
+        self.create_user( *args, **options)
+        # self.change_password(*args, **options)

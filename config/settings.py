@@ -18,6 +18,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -50,7 +51,7 @@ INSTALLED_APPS = [
     "user_auth",
     'university',
     'payments',
-    # 'cars',
+    'cars',
 ]
 
 MIDDLEWARE = [
@@ -207,7 +208,7 @@ CSRF_TRUSTED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = False
 URL_STRIPE = 'https://api.stripe.com'
 URL_CREATE_INTENT = 'https://api.stripe.com/v1/payment_intents' # создание намерения платежа
-URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods' # создание платежа
+URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods' # создание платежного метода
 
 
 card_number = os.getenv('card_number')
@@ -242,5 +243,25 @@ CELERY_BEAT_SCHEDULE = {
     'task-name': {
         'task': 'payments.tasks.check_status_payment',  # Путь к задаче
         'schedule': timedelta(minutes=10),  # Расписание выполнения задачи (например, каждые 10 минут)
+    },
+}
+
+# Логгирование celery
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': str(BASE_DIR ) +  '/' + 'err.log',
+        },
+    },
+    'loggers': {
+        'celery.task': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     },
 }
