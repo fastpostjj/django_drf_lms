@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from user_auth.services import check_user_last_login
+from user_auth.services.services import check_user_last_login
 
 
 class Command(BaseCommand):
