@@ -26,7 +26,7 @@ def set_schedule(*args, **kwargs):
 
 
 def check_user_last_login(*args, **kwargs):
-    days = 1
+    days = 30
     users = User.objects.all()
     for user in users:
         if not user.is_staff and not user.is_superuser:
