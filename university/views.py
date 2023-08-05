@@ -10,7 +10,8 @@ from university.permissions import OwnerOrAdmin, OwnerOrStaffOrAdmin, OwnerOrSta
     OwnerOrAdminChangeSubscribe
 from university.paginations import PaginationClass
 
-from university.services.mailing import send_email
+# from university.services.mailing import send_email
+from university.tasks import send_email
 from user_auth.models import User
 
 
@@ -108,7 +109,12 @@ class CursViewSet(viewsets.ModelViewSet):
         for user_id in subscribed_users:
             user = User.objects.get(id=user_id)
             email = user.email
-            send_email.delay(subject, message_body, email)
+            result = send_email.delay(subject, message_body, email)
+            # result.get()
+            # if result.ready():
+            #     print(result.get())
+            # else:
+            #     print("Задача еще не выполнена")
         return Response(serializer.data)
 
 

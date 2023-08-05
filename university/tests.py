@@ -1,6 +1,10 @@
+from datetime import timedelta
+from time import sleep
+
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
+from django_celery_beat.utils import now
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -246,6 +250,8 @@ class TestCurs(APITestCase):
         data = {'title': 'Обновленный курс для уведомления'}
         response = self.client.put(reverse('curs-detail', args=[self.curs.pk]), data)
         self.assertEqual(response.status_code, 200)
+
+        sleep(60)
 
         # Проверяем, что уведомления отправлены
         self.assertEqual(len(mail.outbox), 1)

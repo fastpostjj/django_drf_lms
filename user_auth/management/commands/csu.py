@@ -28,7 +28,8 @@ class Command(BaseCommand):
 
     def create_user(self, *args, **options):
         user = User.objects.create(
-            email='fastpost@rambler.ru',
+            email='fastpost@yandex.ru',
+            # email='fastpost@rambler.ru',
             first_name='User',
             last_name='Just User',
             is_staff=False,
@@ -49,9 +50,9 @@ class Command(BaseCommand):
         user.save()
 
     def change_password(self, *args, **options):
-        # user = User.objects.get(email='fastpost@yandex.ru')
+        user = User.objects.get(email='fastpost@yandex.ru')
         # user = User.objects.get(email='example@example.com')
-        user = User.objects.get(email='user1@mail.ru')
+        # user = User.objects.get(email='user1@mail.ru')
         # user = User.objects.get(email='fastfastpost@yandex.ru')
         # user = User.objects.get(email='fastfastpost@yandex.ru')
         print(user.check_password('123abc123'))
