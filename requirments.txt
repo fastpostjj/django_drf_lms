@@ -1,6 +1,8 @@
 Django
 djangorestframework
 psycopg
+psycopg2-binary
+pillow
 python-dotenv
 django-filter
 djangorestframework-simplejwt
