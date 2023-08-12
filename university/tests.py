@@ -251,7 +251,7 @@ class TestCurs(APITestCase):
         response = self.client.put(reverse('curs-detail', args=[self.curs.pk]), data)
         self.assertEqual(response.status_code, 200)
 
-        sleep(60)
+        sleep(10*60)
 
         # Проверяем, что уведомления отправлены
         self.assertEqual(len(mail.outbox), 1)

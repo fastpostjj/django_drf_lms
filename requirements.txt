@@ -14,7 +14,4 @@ celery
 django_celery_beat
 
 #Windows
-eventlet
-
-
-
+#eventlet

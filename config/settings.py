@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "user_auth",
     'university',
     'payments',
-
+    'cars',
 ]
 
 MIDDLEWARE = [
