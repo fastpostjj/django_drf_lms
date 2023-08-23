@@ -51,7 +51,7 @@ INSTALLED_APPS = [
     "user_auth",
     'university',
     'payments',
-    'cars',
+    # 'cars',
 ]
 
 MIDDLEWARE = [
@@ -93,13 +93,14 @@ load_dotenv(dotenv_path=dot_env)
 if os.path.isfile(dot_env):
     # Использование переменных окружения
     CACHE_ENABLED = os.getenv('CACHE_ENABLED')
-    user = os.getenv('user')
-    port = os.getenv('port')
-    password = os.getenv('password')
-    host = os.getenv('host')
-    email = os.getenv('email')
-    password_email = os.getenv('password_email')
-    databasename = os.getenv('databasename')
+
+    POSTGRES_USER = os.getenv('POSTGRES_USER')
+    POSTGRES_PORT = os.getenv('POSTGRES_PORT')
+    POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+    EMAIL = os.getenv('EMAIL')
+    PASSWORD_EMAIL = os.getenv('PASSWORD_EMAIL')
+    POSTGRES_DB = os.getenv('POSTGRES_DB')
+    POSTGRES_HOST = os.getenv('POSTGRES_HOST')
 else:
     raise FileNotFoundError(f"File {dot_env} did not find in {BASE_DIR}")
 
@@ -125,11 +126,11 @@ SIMPLE_JWT = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': databasename,
-        'USER': user,
-        'PORT': port,
-        'PASSWORD': password,
-        'HOST': host
+        'NAME': POSTGRES_DB,
+        'USER': POSTGRES_USER,
+        'PORT': POSTGRES_PORT,
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': POSTGRES_HOST
     }
 }
 
@@ -188,8 +189,8 @@ NULLABLE = {'null': True, 'blank': True}
 
 EMAIL_HOST = 'smtp.yandex.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = email
-EMAIL_HOST_PASSWORD = password_email
+EMAIL_HOST_USER = EMAIL
+EMAIL_HOST_PASSWORD = PASSWORD_EMAIL
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 

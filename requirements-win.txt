@@ -11,3 +11,7 @@ stripe
 redis
 celery
 django_celery_beat
+
+#Windows
+#eventlet
+# psycopg
