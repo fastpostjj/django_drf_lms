@@ -1,12 +1,12 @@
+python-dotenv
 Django
 djangorestframework
+djangorestframework-simplejwt
+django-filter
+django-cors-headers
 psycopg2-binary
 pillow
-python-dotenv
-django-filter
-djangorestframework-simplejwt
 drf_yasg
-django-cors-headers
 stripe
 redis
 celery

@@ -19,3 +19,13 @@ user_auth/services/__pycache__/
 .env-docker
 .coverage
 /pgdata
+pgdata/
+postgres_data/
+redis_data/
+redisdata/
+celerybeat/
+celery/
+celerybeat-shedule.bak
+celerybeat-shedule.dat
+celerybeat-shedule.dir
+data/

@@ -28,8 +28,7 @@ class Command(BaseCommand):
 
     def create_user(self, *args, **options):
         user = User.objects.create(
-            email='fastpost@yandex.ru',
-            # email='fastpost@rambler.ru',
+            email='user@user.ru',
             first_name='User',
             last_name='Just User',
             is_staff=False,
@@ -61,7 +60,7 @@ class Command(BaseCommand):
         user.save()
 
     def handle(self, *args, **options):
-        # self.create_superuser( *args, **options)
-        # self.create_manager( *args, **options)
-        self.create_user( *args, **options)
+        self.create_superuser(*args, **options)
+        self.create_manager(*args, **options)
+        self.create_user(*args, **options)
         # self.change_password(*args, **options)
