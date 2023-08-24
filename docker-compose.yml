@@ -1,0 +1,95 @@
+version: '3.9'
+
+networks:
+  db_network:
+
+services:
+  app:
+    build: .
+    # network_mode: host
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    networks:
+      - db_network
+    restart: always
+    command: python manage.py runserver 0.0.0.0:8000
+              && python manage.py migrate
+              && python manage.py loaddata data.json
+              && python manage.py csu
+              && python manage.py collectstatic
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  db:
+    image: postgres:13
+    networks:
+      - db_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  redis:
+    image: redis
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+       - ./redisdata:/data
+    ports:
+      - "6379:6379"
+    restart: always
+
+  celery:
+    container_name: celery
+    build: .
+    command: bash -c "celery -A config.celery worker --loglevel=info"
+    volumes:
+      - .:/celery
+    links:
+      - redis
+    networks:
+      - db_network
+    depends_on:
+      - db
+      - redis
+      - app
+
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    command: >
+      bash -c "sleep 30 && celery -A config.celery beat --loglevel=info"
+    volumes:
+      - .:/celerybeat
+    networks:
+      - db_network
+    depends_on:
+      - app
+      - celery
+
+
+
+volumes:
+  api:
+  db:
+    driver: local
+  redis:
