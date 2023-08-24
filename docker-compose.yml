@@ -17,8 +17,8 @@ services:
     # restart: always
     command: bash -c "python manage.py collectstatic --noinput
               && python manage.py migrate
+              && python manage.py loaddata data.json
               && python manage.py runserver 0.0.0.0:8000"
-              # && python manage.py loaddata data.json
               # && python manage.py csu
     ports:
       - "8000:8000"
@@ -62,21 +62,22 @@ services:
       - "6379:6379"
     restart: always
 
-  # celery:
-  #   build: .
-  #   container_name: celery
-  #   command: bash -c "celery -A config.celery worker --loglevel=info"
-  #   volumes:
-  #     - .:/app
-  #     - ./.env:/app/.env
-  #   links:
-  #     - redis
-  #   # networks:
-  #   #   - db_network
-  #   depends_on:
-  #     - db
-  #     - redis
-  #     - app
+  celery:
+    build: .
+    container_name: celery
+    command: >
+      bash -c "celery -A config.celery worker --beat --loglevel=info"
+    volumes:
+      - .:/app
+      - ./.env:/app/.env
+    links:
+      - redis
+    # networks:
+    #   - db_network
+    depends_on:
+      - db
+      - redis
+      - app
 
   # celery-beat:
   #   container_name: celery-beat
