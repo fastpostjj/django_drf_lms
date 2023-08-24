@@ -15,5 +15,4 @@ user_auth/__pycache__
 user_auth/migrations/__pycache__
 user_auth/management/commands/__pycache__/
 user_auth/services/__pycache__/
-.env
 .coverage
