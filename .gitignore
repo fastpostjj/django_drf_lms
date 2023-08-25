@@ -28,4 +28,5 @@ celery/
 celerybeat-shedule.bak
 celerybeat-shedule.dat
 celerybeat-shedule.dir
+celerybeat-schedule
 data/

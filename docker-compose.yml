@@ -17,8 +17,8 @@ services:
     # restart: always
     command: bash -c "python manage.py collectstatic --noinput
               && python manage.py migrate
-              && python manage.py loaddata data.json
               && python manage.py runserver 0.0.0.0:8000"
+              # && python manage.py loaddata data.json
               # && python manage.py csu
     ports:
       - "8000:8000"
@@ -30,12 +30,12 @@ services:
     # volumes:
     #   - .:/app
     depends_on:
-      - db
-      - redis
-      # db:
-      #   condition: service_healthy
-      # redis:
-      #   condition: service_started
+      # - db
+      # - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   db:
     image: postgres:14.7-alpine
@@ -48,14 +48,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    expose:
+      - '5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./my_dump.sql:/docker-entrypoint-initdb.d/my_dump.sql
     env_file:
-      - .env
+      - ./.env-docker
+
 
   redis:
     image: redis
     command: redis-server --save 20 1 --loglevel warning
+    container_name: redis
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
        - redis_data:/data
     ports:
