@@ -8,6 +8,6 @@ import os
 def check_status_payment(*args):
     check_status(args)
     file_name = str(BASE_DIR) + os.sep + "log.txt"
-    print(file_name)
+    # print(file_name)
     with open(file_name, "a") as file:
         file.write("check_status\n")

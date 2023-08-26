@@ -6,8 +6,8 @@ from config.settings import STRIPE_SECRET_KEY, STRIPE_PUBLIC_KEY
 from university.models import Curs, Lesson
 from payments.models import Paying
 from user_auth.models import User
-from config.settings import URL_CREATE_PAIMENT_METHODS, URL_CREATE_INTENT, card_cvc, card_number, card_exp_year, \
-    card_exp_month
+from config.settings import URL_CREATE_PAIMENT_METHODS, URL_CREATE_INTENT, \
+    card_cvc, card_number, card_exp_year, card_exp_month
 from rest_framework import status
 
 
@@ -206,6 +206,7 @@ class StripePay():
             print("intent.status=", result.status)
         return result
 
+
 class StripePaymentMethod():
     """
     Отдельный класс для создания метода платежа, в настоящий момент не используется в проекте
@@ -292,11 +293,15 @@ def payment(*args, **options):
     # stripe_payment.retrieve_payment_api(intent_API['id'])
     # print("status=", intent_API['status'])
 
+
 def check_status(*args):
     """
-    скрипт для проверки и обновления статусов всех платежей, которые еще не имеют статус "succeeded"
+    скрипт для проверки и обновления статусов
+    всех платежей, которые еще не имеют статус "succeeded"
     """
-    payments = Paying.objects.filter(id_intent__isnull=False).exclude(status='succeeded')
+    payments = Paying.objects.filter(id_intent__isnull=False).exclude(
+        status='succeeded'
+        )
     stripe_object = StripePay()
     for payment in payments:
         result = stripe_object.retrieve_payment(payment.id_intent)

@@ -17,8 +17,6 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -28,7 +26,7 @@ SECRET_KEY = 'django-insecure-$jjb9i8**_yjea&!^q$p)==jw$e4kvz)7%(00qx7jlmmf%%ce=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ['0.0.0.1']
+# ALLOWED_HOSTS = ['127.0.0.1']
 ALLOWED_HOSTS = ['*']
 
 
@@ -205,20 +203,20 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://read-and-write.example.com", #  адрес фронтенд-сервера
+    "https://read-and-write.example.com",  # адрес фронтенд-сервера
     # и добавьте адрес бэкенд-сервера
 ]
 
 CORS_ALLOW_ALL_ORIGINS = False
 URL_STRIPE = 'https://api.stripe.com'
-URL_CREATE_INTENT = 'https://api.stripe.com/v1/payment_intents' # создание намерения платежа
-URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods' # создание платежного метода
+URL_CREATE_INTENT = 'https://api.stripe.com/v1/payment_intents'  # создание намерения платежа
+URL_CREATE_PAIMENT_METHODS = 'https://api.stripe.com/v1/payment_methods'  # создание платежного метода
 
 
 card_number = os.getenv('card_number')
-card_exp_month =os.getenv('card_exp_month')
+card_exp_month = os.getenv('card_exp_month')
 card_exp_year = os.getenv('card_exp_year')
-card_cvc= os.getenv('card_cvc')
+card_cvc = os.getenv('card_cvc')
 
 
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
@@ -228,10 +226,19 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 # Настройки для Celery
 
 # URL-адрес брокера сообщений, Redis
-CELERY_BROKER_URL = 'redis://localhost:6379'
+# CELERY_BROKER_URL = 'redis://localhost:6379'
 
 # URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+
+# URL-адрес брокера сообщений, Redis
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}'
+
+# URL-адрес брокера результатов, также Redis
+CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}'
 
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = "Europe/Moscow"
@@ -258,7 +265,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': str(BASE_DIR ) +  '/' + 'err.log',
+            'filename': str(BASE_DIR) + '/' + 'err.log',
         },
     },
     'loggers': {

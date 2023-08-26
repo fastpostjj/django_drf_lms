@@ -17,6 +17,7 @@ user_auth/services/__pycache__/
 .env
 .env-win
 .env-docker
+.env.docker
 .coverage
 /pgdata
 pgdata/
@@ -28,4 +29,5 @@ celery/
 celerybeat-shedule.bak
 celerybeat-shedule.dat
 celerybeat-shedule.dir
+celerybeat-schedule
 data/

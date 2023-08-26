@@ -13,6 +13,10 @@ class Command(BaseCommand):
     "email":"manager@manager.ru",
     "password":"123abc123"
 }
+    {
+    "email":"user@user.ru",
+    "password":"123abc123"
+}
     """
 
     def create_superuser(self, *args, **options):
