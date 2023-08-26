@@ -294,7 +294,8 @@ def payment(*args, **options):
 
 def check_status(*args):
     """
-    скрипт для проверки и обновления статусов всех платежей, которые еще не имеют статус "succeeded"
+    скрипт для проверки и обновления статусов
+    всех платежей, которые еще не имеют статус "succeeded"
     """
     payments = Paying.objects.filter(id_intent__isnull=False).exclude(status='succeeded')
     stripe_object = StripePay()

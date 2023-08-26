@@ -693,12 +693,6 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 8	2023-08-25 23:44:14.46093+03	1	Платеж 30000.0 руб., от 2023-08-25 за Биология , transfer, None	1	[{"added": {}}]	16	1
 9	2023-08-25 23:44:56.333955+03	1	Платеж 3000.0 руб., от 2023-08-25 за Биология , transfer, None	2	[{"changed": {"fields": ["\\u0421\\u0443\\u043c\\u043c\\u044b \\u043e\\u043f\\u043b\\u0430\\u0442\\u044b, \\u0440\\u0443\\u0431."]}}]	16	1
 10	2023-08-25 23:50:30.644851+03	4	client1@client.cl	1	[{"added": {}}]	12	1
-11	2023-08-26 11:11:50.501925+03	1	Платеж 3000.0 руб., от 2023-08-25 за Биология , transfer, None	3		16	1
-12	2023-08-26 11:18:58.126099+03	5	Платеж 1200.0 руб., от 2023-08-26 за Урок Астрономия. Знакомство., курс Биология  , card, None	2	[{"changed": {"fields": ["\\u0421\\u0442\\u0430\\u0442\\u0443\\u0441 \\u043f\\u043b\\u0430\\u0442\\u0435\\u0436\\u0430"]}}]	16	1
-13	2023-08-26 11:19:04.94031+03	2	Платеж 5000.0 руб., от 2023-08-26 за Биология , card, None	2	[{"changed": {"fields": ["\\u0421\\u0442\\u0430\\u0442\\u0443\\u0441 \\u043f\\u043b\\u0430\\u0442\\u0435\\u0436\\u0430"]}}]	16	1
-14	2023-08-26 11:19:10.905034+03	3	Платеж 6000.0 руб., от 2023-08-26 за Астрономия , card, None	2	[{"changed": {"fields": ["\\u0421\\u0442\\u0430\\u0442\\u0443\\u0441 \\u043f\\u043b\\u0430\\u0442\\u0435\\u0436\\u0430"]}}]	16	1
-15	2023-08-26 11:19:17.553272+03	4	Платеж 1000.0 руб., от 2023-08-26 за Урок Биология. Введение, курс Биология  , card, None	2	[{"changed": {"fields": ["\\u0421\\u0442\\u0430\\u0442\\u0443\\u0441 \\u043f\\u043b\\u0430\\u0442\\u0435\\u0436\\u0430"]}}]	16	1
-16	2023-08-26 11:24:06.45636+03	2	check_login: каждые 5 минуты	1	[{"added": {}}]	8	1
 \.
 
 
@@ -733,7 +727,6 @@ COPY public.django_celery_beat_intervalschedule (id, every, period) FROM stdin;
 
 COPY public.django_celery_beat_periodictask (id, name, task, args, kwargs, queue, exchange, routing_key, expires, enabled, last_run_at, total_run_count, date_changed, description, crontab_id, interval_id, solar_id, one_off, start_time, priority, headers, clocked_id, expire_seconds) FROM stdin;
 1	check_status	user_auth.check_status	[]	{}	\N	\N	\N	\N	t	\N	0	2023-08-25 23:43:22.265412+03	проверка статуса	\N	1	\N	f	2023-08-25 23:42:52+03	\N	{}	\N	\N
-2	check_login	user_auth.check_status	[]	{}	\N	\N	\N	\N	f	\N	0	2023-08-26 11:24:06.442961+03	Check last login user. If user last loged in more than month ago he bloks.	\N	1	\N	f	2023-08-26 11:24:04+03	\N	{}	\N	\N
 \.
 
 
@@ -742,7 +735,7 @@ COPY public.django_celery_beat_periodictask (id, name, task, args, kwargs, queue
 --
 
 COPY public.django_celery_beat_periodictasks (ident, last_update) FROM stdin;
-1	2023-08-26 11:24:06.445957+03
+1	2023-08-25 23:43:22.274684+03
 \.
 
 
@@ -844,10 +837,7 @@ vio980xcgvi6b5nn6hte1iav0vhkakt7	.eJxVjE0OwiAYBe_C2hD-CsWle89A-OBVqgaS0q6Md9cmXe
 --
 
 COPY public.payments_paying (id, date_pay, amount, payment_method, id_intent, status, paid_for_curs_id, paid_for_lesson_id, user_id) FROM stdin;
-5	2023-08-26	1200	card	pi_3NjHWRCmVj9tDYUU0oNsYuij	\N	\N	2	3
-2	2023-08-26	5000	card	pi_3NjHVtCmVj9tDYUU1lpJhEoF	\N	1	\N	3
-3	2023-08-26	6000	card	pi_3NjHVyCmVj9tDYUU1lJGxuyp	\N	2	\N	3
-4	2023-08-26	1000	card	pi_3NjHWMCmVj9tDYUU1XR5BYol	\N	\N	1	3
+1	2023-08-25	3000	transfer	\N	\N	1	\N	3
 \.
 
 
@@ -885,10 +875,10 @@ COPY public.university_subscription (id, curs_id, user_id) FROM stdin;
 --
 
 COPY public.user_auth_user (id, password, last_login, is_superuser, first_name, last_name, is_staff, is_active, date_joined, email, phone, avatar, country, id_payment_method) FROM stdin;
+3	pbkdf2_sha256$600000$lVHLPJ8GdMx2gs6fZePJEL$b5GwrFr8Bchd6lLVlKdaKGt7ujcXvwC5woD3AtWsvEM=	\N	f	User	Just User	f	t	2023-08-25 23:33:29.228449+03	user@user.ru	\N		\N	\N
 2	pbkdf2_sha256$600000$nnzd2oNjewr77lDK9G0wVX$aJ+4upWyJZAbf1Pnk5DHPPbMQUAVWg4+DnEzwEwOSb8=	2023-08-25 23:36:15.371518+03	f	manager	moderator	t	t	2023-08-25 23:33:28.639028+03	manager@manager.ru	\N		\N	\N
 1	pbkdf2_sha256$600000$BKdrdnnuwgFzf290bpxWoH$k6h+eBuiAerP0BTTJXBEszV1bwiVIBqO5Tv8pKIpafo=	2023-08-25 23:37:20.885911+03	t	Admin	SuperAdmin	t	t	2023-08-25 23:33:27.692732+03	admin@admin.pro	\N		\N	\N
 4	123ab123	2023-08-25 23:50:26+03	f	just		f	t	2023-08-25 23:48:04+03	client1@client.cl	\N		\N	\N
-3	pbkdf2_sha256$600000$lVHLPJ8GdMx2gs6fZePJEL$b5GwrFr8Bchd6lLVlKdaKGt7ujcXvwC5woD3AtWsvEM=	\N	f	User	Just User	f	t	2023-08-25 23:33:29.228449+03	user@user.ru	\N		\N	pm_1NjHdbCmVj9tDYUUCJY8kpRm
 \.
 
 
@@ -933,7 +923,7 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 64, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 16, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 10, true);
 
 
 --
@@ -961,7 +951,7 @@ SELECT pg_catalog.setval('public.django_celery_beat_intervalschedule_id_seq', 1,
 -- Name: django_celery_beat_periodictask_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_celery_beat_periodictask_id_seq', 2, true);
+SELECT pg_catalog.setval('public.django_celery_beat_periodictask_id_seq', 1, true);
 
 
 --
@@ -989,7 +979,7 @@ SELECT pg_catalog.setval('public.django_migrations_id_seq', 44, true);
 -- Name: payments_paying_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.payments_paying_id_seq', 5, true);
+SELECT pg_catalog.setval('public.payments_paying_id_seq', 1, true);
 
 
 --

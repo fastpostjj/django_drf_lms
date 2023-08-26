@@ -1,6 +1,6 @@
 Django
 djangorestframework
-psycopg2-binary
+# psycopg2-binary
 pillow
 python-dotenv
 django-filter
@@ -13,5 +13,5 @@ celery
 django_celery_beat
 
 #Windows
-#eventlet
-# psycopg
+eventlet
+psycopg
