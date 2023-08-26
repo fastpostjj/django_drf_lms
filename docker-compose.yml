@@ -16,20 +16,23 @@ services:
       - postgres_data:/var/lib/postgresql/data
       # - ./my_dump2.sql:/docker-entrypoint-initdb.d/my_dump2.sql
     env_file:
-      - ./.env.docker
+      - ./.env
+      # - ./.env.docker
 
   app:
     build: .
     command: bash -c "python manage.py collectstatic --noinput
+      && python manage.py migrate
       && python manage.py loaddata data.json
       && python manage.py runserver 0.0.0.0:8000"
-      # && python manage.py migrate
     ports:
       - "8000:8000"
     volumes:
-      - ./.env.docker:/app/.env
+      - ./.env:/app/.env
+      # - ./.env.docker:/app/.env
     env_file:
-      - ./.env.docker
+      # - ./.env.docker
+      - ./.env
     depends_on:
       db:
         condition: service_healthy
@@ -57,7 +60,8 @@ services:
     command: >
       bash -c "celery -A config.celery worker --beat --loglevel=info"
     volumes:
-      - ./.env.docker:/app/.env
+      # - ./.env.docker:/app/.env
+      - ./.env:/app/.env
       - .:/app
     links:
       - redis
