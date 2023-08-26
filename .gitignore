@@ -17,6 +17,7 @@ user_auth/services/__pycache__/
 .env
 .env-win
 .env-docker
+.env.docker
 .coverage
 /pgdata
 pgdata/
