@@ -1,52 +1,68 @@
 version: '3.9'
 
+networks:
+  db_network:
+
 services:
+  app:
+    build: .
+    # network_mode: host
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+    #   interval: 1m
+    #   timeout: 10s
+    #   retries: 3
+    networks:
+      - db_network
+    # restart: always
+    command: bash -c "python manage.py collectstatic --noinput
+              && python manage.py migrate
+              && python manage.py loaddata data.json
+              && python manage.py runserver 0.0.0.0:8000"
+              # && python manage.py csu
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env.docker
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
   db:
     image: postgres:14.7-alpine
     restart: always
     container_name: db
+    networks:
+      - db_network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
     expose:
-      - '5432'
+      - '5432:5432'
     volumes:
       - postgres_data:/var/lib/postgresql/data
       # - ./my_dump2.sql:/docker-entrypoint-initdb.d/my_dump2.sql
     env_file:
       - ./.env.docker
 
-  app:
-    build: .
-    command: bash -c "python manage.py collectstatic --noinput
-      && python manage.py loaddata data.json
-      && python manage.py runserver 0.0.0.0:8000"
-      # && python manage.py migrate
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./.env.docker:/app/.env
-    env_file:
-      - ./.env.docker
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
 
   redis:
     image: redis
     command: redis-server --save 20 1 --loglevel warning
     container_name: redis
+    networks:
+      - db_network
     healthcheck:
       test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
       interval: 5s
       timeout: 5s
       retries: 5
     volumes:
-      - redis_data:/data
+       - redis_data:/data
     ports:
       - "6379:6379"
     restart: always
@@ -57,10 +73,13 @@ services:
     command: >
       bash -c "celery -A config.celery worker --beat --loglevel=info"
     volumes:
-      - ./.env.docker:/app/.env
       - .:/app
+      - ./.env:/app/.env
     links:
       - redis
+      - db
+    networks:
+      - db_network
     depends_on:
       - db
       - redis
